@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Wiremock Manager</title>
+</head>
+<body class="text-center">
+
+<form class="form-signin" th:action="@{/login}" method="post">
+    <h1 class="h3 mb-3 font-weight-normal">Faça login</h1>
+
+    <label for="inputUserName" class="sr-only">Usuário</label>
+    <input type="text" id="inputUserName"
+           name="username" class="form-control"
+           placeholder="Usuário" required="" autofocus="">
+
+    <label for="inputPassword" class="sr-only">Senha</label>
+    <input type="password" id="inputPassword"
+           name="password" class="form-control"
+           placeholder="Senha" required="">
+
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" checked name="rememberme"
+                   value="remember-me"> Permanecer logado
+        </label>
+    </div>
+
+    <div class="text-danger" th:if="${param.error}">
+        Invalid username and password.
+    </div>
+
+    <div th:if="${param.logout}" class="text-warning">
+        You have been logged out.
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+</form>
+
+</body>
+<script src="./lib/bootstrap.min.js"></script>
+<link rel="stylesheet" href="./css/lib/bootstrap.min.css"/>
+<link rel="stylesheet" href="./css/app/login.css"/>
+</html>

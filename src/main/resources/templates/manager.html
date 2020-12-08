@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AG WireMock Manager</title>
+</head>
+<body class="d-flex flex-column">
+<header>
+    <div class="d-flex p-1 justify-content-between m-2 text-color-default position-relative wm-header-container  align-self-center">
+        <div class="wm-header-sub-container">
+            <img height="30px" src="./img/wiremock_icon.png">
+        </div>
+
+        <div class="h3 d-flex h-100">
+            <span class="align-self-center">Gerenciador de WireMock</span>
+        </div>
+
+        <div id="wm-wiremock-port" class="h5 wm-wiremock-port d-flex h-100">
+            <span class="align-self-center">Porta do WireMock: </span>
+            <span class="align-self-center ml-2"
+                  id="wm-wiremock-port-label" th:text="${wiremockPort}">9999</span>
+        </div>
+
+        <div class="toast position-absolute wm-toast" role="alert" aria-live="polite" aria-atomic="true"
+             data-delay="2000">
+            <div role="alert" aria-live="assertive" aria-atomic="true" class="p-2">
+                <span id="wm_toast_text">Operação realizada com sucesso!</span>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="flex-fill d-flex bd-highlight wm-main">
+    <div id="wm-left-box" class="bd-highlight h-100 wm-left-box">
+        <div class="m-100 wm-left-box-header p-2 d-flex flex-row">
+            <span data-bind="click: onNewFolderClick" id="wm-new-folder"
+                  class="btn text-color-default wm-hover-round-grey">
+                <img src="./img/plus-folder.svg"/> Nova Pasta
+            </span>
+        </div>
+        <!-- List of stub groups -->
+        <div data-bind="foreach: stubGroups, visible: stubGroups().length > 0" class="m-100 wm-stubs-container">
+            <!-- Stub group container -->
+            <div class="w-100 pl-2 pt-2 pb-2 pr-0 wm-stubs-collection-item-container">
+                <div id="wm-stubs-collection-name-container" role='button'
+                     class="w-100 flex-fill d-flex wm-stubs-collection-name-container">
+                    <img id="wm-expand-close-img" data-toggle="collapse"
+                         href="#wm-expand-close-container"
+                         data-bind="attr: { href: '#wn-expand-close-container' + id() }"
+                         role="button" aria-expanded="false" aria-controls="wm-collapse-close"
+                         src="./img/triangle-right.svg" class="pr-1 wm-expand-close-img"/>
+                    <span data-bind="text: name()" class="ml-1 flex-grow-1 font-weight-bold text-truncate">Request Group Name</span>
+                    <img src="./img/three-dot-menu.svg"
+                         class="pr-1 mr-1 ml-2 wm-stub-group-menu-img"
+                         id="wm-stub-group-menu-img"/>
+                </div>
+                <!-- Stubs count -->
+                <div class="w-100 justify-content-end wm-request-count-container">
+                    <span class="font-weight-light font-small font-italic text-secondary wm-request-count">
+                        <b data-bind="text: stubs().length">&nbsp;</b> Request(s)
+                    </span>
+                </div>
+                <!-- List of stubs for this group (collapsable by the right arrow) -->
+                <div data-bind="attr: { id: 'wn-expand-close-container' + id() }, foreach: stubs(), visible: stubs().length > 0"
+                     class="wm-expand-close-container collapse" id="wm-expand-close-container">
+                    <!-- Stub item -->
+                    <div data-bind="click: onStubClick.bind('', $data, $parent)" class="w-100 pl-1 d-flex">
+                        <a class="w-100 pl-2 pt-1 pb-1 flex-fill d-flex wm-stub-item" id="wm-stub-item">
+                            <span data-bind="text: requestMethod(), class: requestColorClass()"
+                                  class="font-weight-bold">POST</span>
+                            <span data-bind="text: name()"
+                                  class="ml-2 flex-grow-1 font-weight-light font-italic text-secondary text-truncate">Mock Name</span>
+                            <img src="./img/three-dot-menu.svg" class="pr-1 mr-1 wm-stub-menu-img"
+                                 id="wm-stub-menu-img"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="wm-right-box" class="p-1 d-flex flex-column flex-grow-1 h-100 wm-right-box overflow-auto">
+
+        <!-- ko if: tabStubEditors().length > 0 -->
+        <div class="d-flex flex-column flex-grow-1 h-100">
+            <nav>
+                <div data-bind="foreach: tabStubEditors"
+                     class="nav nav-tabs wm-selected-stub-tab-container" id="nav-tab" role="tablist">
+                    <div id="nav-home-tab"
+                         data-bind="click: requestTabFocus, css: {active: active}"
+                         class="nav-item nav-link active p-1 font-small d-flex wm-stub-tab-nav"
+                         data-toggle="tab" role="tab" aria-controls="nav-home" aria-selected="true">
+                    <span data-bind="text: stub().requestMethod(), class: stub().requestColorClass()"
+                          class="font-weight-bold">POST</span>
+                        <span data-bind="text: stub().name()"
+                              class="ml-2 flex-grow-1 font-weight-light font-italic text-secondary text-truncate">Mock Name</span>
+                        <i data-bind="click: removeTabEditor"
+                           class="fa fa-times  ml-2 align-self-center wm-close-stub-tab"></i>
+                    </div>
+                </div>
+            </nav>
+            <div data-bind="foreach: tabStubEditors"
+                 class="tab-content flex-grow-1 d-flex overflow-hidden position-relative" id="nav-tabContent">
+
+                <div id="nav-home"
+                     data-bind="css: {active: active, show: active, tabEditorVisible: active, tabEditorHidden: invisible}"
+                     role="tabpanel"
+                     class="tab-pane fade flex-grow-1 d-flex overflow-hidden position-absolute w-100 h-100">
+                    <!-- selected stub container -->
+                    <div class="mt-1 d-flex flex-column flex-grow-1 overflow-auto">
+                        <div id="wm-stub-text-header" class="d-flex flex-row">
+                            <div class="card mr-1 flex-grow-1 flex-row p-2">
+                                <div class="wm-content-editable-stub-name-container font-weight-light text-color-default mx-0 w-100 container p-0 text-truncate">
+                                <span data-bind="htmlValue: stub().name"
+                                      contenteditable="true"
+                                      class="text-truncate single-line"
+                                      place-text="Atribua um nome para este stub ..."></span>
+                                    <i class="wm-content-editable-stub-name-pencil fa fa-pencil ml-2"></i>
+                                </div>
+                            </div>
+
+                            <button id="wm-stub-text-save"
+                                    data-bind="click: saveEditedStub"
+                                    class="btn btn-primary px-5" type="button">
+                            <span class="spinner-grow spinner-grow-sm" style="display:none" role="status"
+                                  aria-hidden="true"></span>
+                                Salvar
+                            </button>
+                        </div>
+                        <div class="card mt-1 w-100 flex-grow-1 d-flex wm-stub-text-container"
+                             id="wm-stub-text-container">
+                            <div id="wm-stub-text" class="h-100 wm-stub-text"
+                                 data-bind="codemirror: {mode: 'javascript', lineWrapping: false, indentUnit: 4, lineNumbers: true, value: stub().stub} "></div>
+
+                            <div id="wm-loading-stubs"
+                                 class="d-flex justify-content-center h-100 w-100 wm-loading wm-loading-stub">
+                                <div class="spinner-border align-self-center" role="status"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- selected stub container -->
+
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+
+        <!-- ko if: tabStubEditors().length == 0 -->
+        <div data-bind="visible: tabStubEditors().length == 0"
+             class="d-flex justify-content-center h-100 w-100">
+            <div class="align-self-center d-flex flex-column" style="width: 350px">
+                <img src="./img/main_no_stub_open.png">
+                <span class="h3 text-center">Crie um novo mock ou selecione na lista ao lado</span>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+</main>
+<footer>
+    <div class="d-flex p-1 justify-content-end font-small text-color-default">
+        <span>Developed by Agnaldo N. Pereira</span>
+    </div>
+</footer>
+
+<!-- Modal New StubGroup -->
+<div class="modal fade" id="newStubGroupModal" tabindex="-1"
+     role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Nova Pasta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nova Pasta *</label>
+                    <input id="newStubModalNameInput" type="text"
+                           class="form-control" placeholder="Nova Pasta">
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="newStubModalDescInput" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group my-0 float-right">
+                    <span class="font-small text-secondary">* Obrigatório</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button data-bind="click: onNewFolderSaveClick" id="newStubModalSave" type="button"
+                        class="btn btn-primary">Salvar
+                </button>
+            </div>
+            <div id="wm-loading-saving-new-stub"
+                 class="d-flex justify-content-center h-100 w-100 wm-loading wm-loading-saving-new-stub">
+                <div class="spinner-border align-self-center" role="status"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal New StubGroup -->
+
+<div id="wm-full-screen-loading"
+     class="d-flex justify-content-center h-100 w-100 wm-loading wm-loading-saving-new-stub">
+    <div class="spinner-border align-self-center" role="status"></div>
+</div>
+
+</body>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+
+<script src="./js/lib/jquery-3.5.1.min.js"></script>
+<script src="./js/lib/jquery.contextMenu.min.js"></script>
+<script src="./js/lib/jquery.ui.position.js"></script>
+<script src="./js/lib/angular.min.js"></script>
+<script src="./js/lib/bootstrap.min.js"></script>
+<script src="./js/lib/bootstrap-sortable.min.js"></script>
+<script src="./js/lib/bootbox.min.js"></script>
+<script src="./js/lib/codemirror.js"></script>
+<script src="./js/lib/javascript.js"></script>
+<script src="./js/lib/knockout-3.5.1.js"></script>
+<script src="./js/app/app.js"></script>
+<link rel="stylesheet" href="./css/lib/bootstrap.min.css"/>
+<link rel="stylesheet" href="./css/lib/bootstrap-sortable.css"/>
+<link rel="stylesheet" href="./css/lib/codemirror.css"/>
+<link rel="stylesheet" href="./css/app/app.css"/>
+
+</html>

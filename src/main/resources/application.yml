@@ -1,0 +1,82 @@
+spring:
+  main:
+    banner-mode: off
+    lazy-initialization: true
+  profiles:
+    active: dev
+  application.name: agprojects.wiremock
+  output.ansi.enabled: always
+  jmx.enabled: false
+  mail:
+    host: smtp.office365.com
+    port: 587
+    username: email@email.com
+    password: pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable : true
+
+  security:
+    user:
+      name: "user007"
+      password: "112233"
+      roles:
+        - USER
+    basic:
+      enabled: true
+      authorize-mode: NONE
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+      settings:
+        web-allow-others: true
+  allowed:
+    resources: /h2/**
+
+  datasource:
+    url: jdbc:h2:file:~/h2
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8082
+  error:
+    whitelabel:
+      enabled: false
+
+management:
+  endpoint.health.show-details: always
+  endpoints:
+    enabled-by-default: true
+    web.exposure.include: "health, info, env, configprops, metrics"
+    jmx.exposure.exclude: "*"
+  metrics.export.jmx.enabled: false
+
+logging:
+  pattern:
+    level: "%clr(%-5p)"
+    console: "%date{yyyy.MM.dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN} %clr([%thread]){magenta} %clr(%logger{-1}){cyan}->%clr(%method){blue}: %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+  register-shutdown-hook: true
+  level.root: INFO
+
+wiremock:
+  base-path: ~/noProfile
+  file-name: wiremock_spring.jar
+  port: 8081

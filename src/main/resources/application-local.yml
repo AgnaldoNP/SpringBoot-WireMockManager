@@ -1,0 +1,19 @@
+spring:
+  profiles: local
+
+  datasource:
+    url: jdbc:h2:file:~/wiremock/h2/database
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web.reactive.result.method: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
+
+wiremock:
+  base-path: ~/wiremock
+  file-name: wiremock_spring.jar
+  port: 80

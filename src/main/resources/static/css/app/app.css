@@ -1,0 +1,204 @@
+
+body {
+   height: 100vh;
+   background: #efefef5c;
+}
+
+.flex-fill {
+   flex:1 1 auto;
+}
+
+[contentEditable=true]:empty:not(:focus):before{
+  content:attr(place-text);
+  color:grey;
+}
+
+[contenteditable] {
+  outline: 0px solid transparent;
+}
+
+[contenteditable="true"].single-line {
+    white-space: nowrap;
+    width:200px;
+    overflow: hidden;
+}
+[contenteditable="true"].single-line br {
+    display:none;
+
+}
+[contenteditable="true"].single-line * {
+    display:inline;
+    white-space:nowrap;
+}
+
+.CodeMirror {
+    height: 100%;
+    z-index: 0;
+}
+
+.CodeMirror-scroll {
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.text-color-default {
+    color: darkslategrey;
+}
+
+.wm-hover-round-grey:hover {
+    background: #EEE;
+}
+
+.font-small {
+    font-size: small;
+}
+
+.wm-main {
+    padding: 0;
+    overflow: hidden;
+}
+
+.wm-left-box {
+    width: 250px;
+    min-width: 250px;
+    max-width: 550px;
+    border-top: solid grey 1px;
+    border-bottom: solid grey 1px;
+    overflow-y: auto;
+    resize: horizontal
+}
+
+.wm-right-box {
+    border-top: solid grey 1px;
+    border-left: solid grey 1px;
+    border-bottom: solid grey 1px;
+}
+
+.wm-left-box-header {
+    border-bottom: solid #9c9696 1px;
+    height:50px
+}
+
+.wm-stubs-collection-item-container {
+    border-bottom: solid #d8d3d3 1px;
+    box-shadow: inset #EEEEEE66 1px 1px 6px 6px;
+}
+
+.wm-stubs-collection-item-container:hover {
+    background-color: #EEEEEE33;
+}
+
+.wm-request-count-container {
+    margin-top: -5px;
+}
+
+.wm-request-count {
+    font-size: x-small;
+}
+
+.wm-stub-item {
+    font-size: small;
+}
+
+.wm-stub-item > .request-type {
+    font-size: smaller;
+}
+
+.wm-stub-item:hover {
+    cursor: pointer;
+    background-color: #EEEEEE66;
+}
+
+.wm-stub-item-request-type-post {
+    color: #ff9933
+}
+
+.wm-stub-item-request-type-get {
+    color: #009933
+}
+
+.wm-stub-item-request-type-put {
+    color: #0099ff
+}
+
+.wm-stub-item-request-type-patch {
+    color: #a6a6a6
+}
+
+.wm-stub-item-request-type-delete {
+    color: #ff6666
+}
+
+.wm-stub-item-request-type-other {
+    color: #d9d9d9
+}
+
+.wm-stubs-container {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.wm-stub-text-container{
+    position: relative;
+    overflow-y: auto;
+}
+
+.wm-stub-text-header {
+    position:flex;
+}
+
+.wm-loading{
+    position: absolute;
+    background: #f7f7f7bf;
+    visibility: hidden;
+}
+
+.wm-selected-stub-tab-container {
+
+}
+
+.wm-stub-tab-nav {
+    cursor: pointer;
+    max-width: 150px;
+}
+
+.wm-close-stub-tab {
+    visibility: hidden;
+}
+
+.wm-stub-group-menu-img {
+    visibility: hidden;
+}
+
+.wm-stub-menu-img {
+    visibility: hidden;
+}
+
+.wm-content-editable-stub-name-pencil {
+    visibility: hidden;
+}
+
+.tabEditorHidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.tabEditorVisible {
+    opacity: 100;
+    visibility: visible;
+}
+
+.wm-toast{
+    width: 250px;
+    top: 15px;
+    right: 15px;
+    display: none;
+}
+
+.wm-header-container{
+    height:40px;
+}
+
+.wm-wiremock-port{
+cursor:pointer;
+}
