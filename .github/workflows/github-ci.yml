@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Application
+        run: |
+          ./gradlew clean bootJar
+
+      - name: Archive Application Jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: ApplicationJar
+          path: |
+            build/libs/agprojects.wiremock-1.0.0.jar
+
+  deploy:
+    needs: [build]
+    runs-on: [HostedRunner]
+
+    steps: 
+      - name: Download Application Jar
+        uses: actions/download-artifact@v2
+        with:
+          name: ApplicationJar
+        
+      - name: Killing Previuos Instances
+        run: |
+            wiremockpid=$(ps -aux | grep -iE "\-jar.*wiremock.*jar.*\-\-" | awk '{print $2}')
+            if [ -z "$wiremockpid" ]
+            then
+              echo "No wiremock manager instance alive"
+            else
+              echo "killing wiremock manager pids "$wiremockpid
+              sudo kill -9 $wiremockpid
+            fi
+
+      - name: Starting Application
+        run: |
+            sudo java -jar agprojects.wiremock-1.0.0.jar --spring.profiles.active=ec2 &
